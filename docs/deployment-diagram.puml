@@ -1,0 +1,21 @@
+@startuml Deployment-3D-Marketplace
+!theme plain
+
+title 3D Marketplace - Deployment Diagram
+
+skinparam node {
+  BackgroundColor LightGray
+  BorderColor Black
+}
+
+node "Database Server\n(MongoDB)" as DB
+
+node "Application Server\n(Node.js)" as App
+
+node "Client Applications\n(Web/Mobile)" as Client
+
+' Simple connections
+Client --> App : HTTPS
+App --> DB : Database Access
+
+@enduml

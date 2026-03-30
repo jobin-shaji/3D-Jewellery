@@ -1,0 +1,28 @@
+@startuml 3D-Marketplace-Collaboration-Diagram
+!theme plain
+
+title 3D Marketplace - Collaboration Diagram
+
+skinparam rectangle {
+  BackgroundColor White
+  BorderColor Black
+}
+
+' Simple linear flow
+rectangle "User" as User
+rectangle "Product\nCatalog" as Product
+rectangle "Shopping\nCart" as Cart
+rectangle "Payment" as Payment
+rectangle "Order\nConfirmation" as Order
+
+' Main flow
+User --> Product : Browse
+Product --> Cart : Add Item
+Cart --> Payment : Checkout
+Payment --> Order : Complete
+
+' Simple feedback
+Order --> User : Confirmation
+Cart --> User : Summary
+
+@enduml

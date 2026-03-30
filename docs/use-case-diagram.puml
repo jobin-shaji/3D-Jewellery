@@ -1,0 +1,30 @@
+@startuml
+left to right direction
+
+
+actor Admin
+actor Client as "Client"
+actor Guest
+
+rectangle "3D Marketplace System" {
+  Client -- (Browse Products)
+  Guest -- (Browse Products)
+  Client -- (Register / Login)
+  Guest -- (Register / Login)
+  Client -- (Add to Cart)
+  Client -- (Place Order)
+  Client -- (Make Payment)
+  Client -- (View Orders)
+  Client -- (Manage Wishlist)
+  Client -- (Update Profile)
+  Admin -- (Manage Products)
+  Admin -- (Manage Users)
+  Admin -- (View Analytics)
+  Admin -- (Manage Orders)
+  Admin -- (Manage Categories)
+  Admin -- (Manage Metals)
+  Admin -- (Manage Pricing)
+  Admin -- (Manage Invoices)
+}
+
+@enduml

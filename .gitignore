@@ -32,3 +32,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# 3D Reconstruction Pipeline generated folders
+seminar/backend/models/
+seminar/backend/colmap/
+seminar/backend/uploads/

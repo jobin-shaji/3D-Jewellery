@@ -1,0 +1,67 @@
+@startuml 3D-Marketplace-Component-Diagram
+!theme plain
+
+title 3D Marketplace - Component Diagram
+
+skinparam componentStyle rectangle
+skinparam backgroundColor white
+skinparam borderColor black
+skinparam arrowColor black
+
+' External Services
+cloud "External Services" {
+  database "MongoDB\nDatabase" as DB
+  component "Cloudinary\nImage Storage" as Storage
+  component "Razorpay\nPayments" as Payment
+}
+
+' Frontend Layer
+package "Frontend (React)" {
+  component "Authentication\nModule" as Auth_FE
+  component "Product Catalog\nModule" as Product_FE  
+  component "Shopping Cart\nModule" as Cart_FE
+  component "User Dashboard\nModule" as User_FE
+  component "Admin Panel\nModule" as Admin_FE
+}
+
+' Backend Layer
+package "Backend API (Node.js)" {
+  component "API Gateway\n(Express)" as API
+  component "Authentication\nService" as Auth_BE
+  component "Product\nService" as Product_BE
+  component "Order\nService" as Order_BE
+  component "User\nService" as User_BE
+}
+
+' Data Layer
+package "Data Models" {
+  component "User\nModel" as UserModel
+  component "Product\nModel" as ProductModel
+  component "Order\nModel" as OrderModel
+}
+
+' Main connections
+Auth_FE --> API : HTTPS
+Product_FE --> API : REST API
+Cart_FE --> API : REST API
+User_FE --> API : REST API
+Admin_FE --> API : REST API
+
+API --> Auth_BE
+API --> Product_BE
+API --> Order_BE
+API --> User_BE
+
+Auth_BE --> UserModel
+Product_BE --> ProductModel
+Order_BE --> OrderModel
+User_BE --> UserModel
+
+UserModel --> DB
+ProductModel --> DB
+OrderModel --> DB
+
+Product_BE --> Storage : Images
+Order_BE --> Payment : Process
+
+@enduml
