@@ -2,8 +2,9 @@ import React from "react";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { Box, Image, X } from "lucide-react";
+import { Box, Image, X, Cpu } from "lucide-react";
 import { useToast } from "@/shared/hooks/use-toast";
+import { ModelGenerationModal } from "./ModelGenerationModal";
 
 // Local types for FileUploadSection
 export interface FileUploadState {
@@ -19,6 +20,8 @@ export interface FileUploadProps {
   onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onRemoveImage: (index: number) => void;
   onRemove3DModel: () => void;
+  reconstructionJobId?: string | null;
+  onReconstructionJobCreated?: (jobId: string) => void;
 }
 
 export const FileUploadSection: React.FC<FileUploadProps> = ({
@@ -26,7 +29,9 @@ export const FileUploadSection: React.FC<FileUploadProps> = ({
   onModel3DUpload,
   onImageUpload,
   onRemoveImage,
-  onRemove3DModel
+  onRemove3DModel,
+  reconstructionJobId,
+  onReconstructionJobCreated
 }) => {
   const { toast } = useToast();
 
@@ -123,7 +128,20 @@ export const FileUploadSection: React.FC<FileUploadProps> = ({
                 <Box className="h-4 w-4 mr-2" />
                 Choose 3D Model
               </Button>
+              {onReconstructionJobCreated && (
+                <ModelGenerationModal onJobCreated={onReconstructionJobCreated} />
+              )}
             </div>
+            
+            {reconstructionJobId && !fileState.model3DPreview && (
+              <div className="flex items-center justify-between p-3 bg-blue-50/50 border border-blue-100 rounded text-blue-800">
+                <div className="flex items-center">
+                  <Cpu className="h-4 w-4 mr-2" />
+                  <span className="text-sm font-medium">3D Generation Pipeline Running</span>
+                </div>
+              </div>
+            )}
+
             {fileState.model3DPreview && (
               <div className="flex items-center justify-between p-2 bg-muted/50 rounded">
                 <span className="text-sm">{fileState.model3DPreview}</span>

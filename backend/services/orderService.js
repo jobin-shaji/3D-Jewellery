@@ -147,14 +147,16 @@ class OrderService {
         images: item.productData.images || [],
         model_3d_url: item.productData.model_3d_url || '',
         certificates: item.productData.certificates || [],
-        totalPrice: item.productData.totalPrice || 0
+        totalPrice: item.productData.totalPrice || 0,
+        baseMaterialCost: item.productData.baseMaterialCost || 0
       },
       variant: item.variantData ? {
         variant_id: item.variantData.variant_id,
         name: item.variantData.name,
         making_price: item.variantData.making_price || 0,
         metal: item.variantData.metal || [],
-        totalPrice: item.variantData.totalPrice || 0
+        totalPrice: item.variantData.totalPrice || 0,
+        baseMaterialCost: item.variantData.baseMaterialCost || 0
       } : null,
       quantity: item.quantity,
       price: item.totalprice || item.variantData?.totalPrice || 0

@@ -64,7 +64,8 @@ const orderSchema = new mongoose.Schema({
             file_url: { type: String, required: true }
           }
         ],
-        totalPrice: { type: Number, default: null, min: 0 }
+        totalPrice: { type: Number, default: null, min: 0 },
+        baseMaterialCost: { type: Number, default: null, min: 0 }
       },
       // Full variant snapshot at time of order
       variant: {
@@ -79,7 +80,8 @@ const orderSchema = new mongoose.Schema({
             color: { type: String, default: '' }
           }
         ],
-        totalPrice: { type: Number, default: 0, min: 0 }
+        totalPrice: { type: Number, default: 0, min: 0 },
+        baseMaterialCost: { type: Number, default: null, min: 0 }
       },
       quantity: { type: Number, required: true },
       price: { type: Number, required: true }

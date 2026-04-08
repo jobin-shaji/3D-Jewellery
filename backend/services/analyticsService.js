@@ -53,11 +53,33 @@ class AnalyticsService {
           }
         },
         {
+          $addFields: {
+            totalMaterialCost: {
+              $reduce: {
+                input: '$items',
+                initialValue: 0,
+                in: { 
+                  $add: [
+                    '$$value', 
+                    { 
+                      $multiply: [
+                        '$$this.quantity', 
+                        { $ifNull: ['$$this.variant.baseMaterialCost', { $ifNull: ['$$this.product.baseMaterialCost', 0] }] }
+                      ] 
+                    }
+                  ] 
+                }
+              }
+            }
+          }
+        },
+        {
           $group: {
             _id: null,
             totalRevenue: { $sum: '$totalPrice' },
             totalOrders: { $sum: 1 },
-            avgOrderValue: { $avg: '$totalPrice' }
+            avgOrderValue: { $avg: '$totalPrice' },
+            totalProfit: { $sum: { $subtract: ['$subtotal', '$totalMaterialCost'] } }
           }
         }
       ]);
@@ -75,9 +97,31 @@ class AnalyticsService {
           }
         },
         {
+          $addFields: {
+            totalMaterialCost: {
+              $reduce: {
+                input: '$items',
+                initialValue: 0,
+                in: { 
+                  $add: [
+                    '$$value', 
+                    { 
+                      $multiply: [
+                        '$$this.quantity', 
+                        { $ifNull: ['$$this.variant.baseMaterialCost', { $ifNull: ['$$this.product.baseMaterialCost', 0] }] }
+                      ] 
+                    }
+                  ] 
+                }
+              }
+            }
+          }
+        },
+        {
           $group: {
             _id: null,
-            totalRevenue: { $sum: '$totalPrice' }
+            totalRevenue: { $sum: '$totalPrice' },
+            totalProfit: { $sum: { $subtract: ['$subtotal', '$totalMaterialCost'] } }
           }
         }
       ]);
@@ -87,6 +131,13 @@ class AnalyticsService {
       const prevRevenue = prevRevenueData[0]?.totalRevenue || 0;
       const revenueChange = prevRevenue > 0 
         ? ((currentRevenue - prevRevenue) / prevRevenue) * 100 
+        : 0;
+
+      // Calculate profit change
+      const currentProfit = revenueData[0]?.totalProfit || 0;
+      const prevProfit = prevRevenueData[0]?.totalProfit || 0;
+      const profitChange = prevProfit > 0 
+        ? ((currentProfit - prevProfit) / prevProfit) * 100 
         : 0;
 
       // Total active users
@@ -129,6 +180,10 @@ class AnalyticsService {
           total: currentRevenue,
           change: revenueChange,
           avgOrderValue: revenueData[0]?.avgOrderValue || 0
+        },
+        profit: {
+          total: currentProfit,
+          change: profitChange
         },
         orders: {
           total: revenueData[0]?.totalOrders || 0,

@@ -148,6 +148,11 @@ const productSchema = new mongoose.Schema({
       type: Number,
       default: 0,
       min: 0
+    },
+    baseMaterialCost: {
+      type: Number,
+      default: null,
+      min: 0
     }
   }],
   images: [{
@@ -187,8 +192,22 @@ const productSchema = new mongoose.Schema({
     }],
     default: []
   },
+  reconstruction_job_id: {
+    type: String,
+    default: null
+  },
+  reconstruction_status: {
+    type: String,
+    enum: ['queued', 'processing', 'completed', 'failed', null],
+    default: null
+  },
   // Computed total price snapshot and last update timestamp
   totalPrice: {
+    type: Number,
+    default: null,
+    min: 0
+  },
+  baseMaterialCost: {
     type: Number,
     default: null,
     min: 0

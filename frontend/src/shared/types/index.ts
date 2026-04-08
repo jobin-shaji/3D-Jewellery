@@ -93,6 +93,8 @@ export interface Product {
   created_at?: string;
   totalPrice?: number;
   latestPriceUpdate?: string;
+  reconstruction_job_id?: string | null;
+  reconstruction_status?: 'queued' | 'processing' | 'completed' | 'failed' | null;
 }
 
 export interface Address {

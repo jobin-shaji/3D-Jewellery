@@ -83,7 +83,7 @@ export const SpecificationsForm: React.FC<SpecificationsFormProps> = ({
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="certificationFile">Certification File</Label>
+              <Label htmlFor="certificationFile">Certification file</Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="certificationFile"

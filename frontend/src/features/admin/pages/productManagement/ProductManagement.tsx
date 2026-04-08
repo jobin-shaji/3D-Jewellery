@@ -35,7 +35,8 @@ const createProductData = (
   metals: Metal[],
   gemstones: Gemstone[],
   variants: ProductVariant[],
-  hasMultipleVariants: boolean
+  hasMultipleVariants: boolean,
+  reconstructionJobId: string | null
 ): Product => {
   return {
     name: formData.name,
@@ -47,6 +48,7 @@ const createProductData = (
     metals: hasMultipleVariants ? [] : metals.map(({ id, ...metal }) => metal), // Empty for variants mode
     gemstones: gemstones.map(({ id, ...gemstone }) => gemstone), // Remove frontend-only id
     variants: hasMultipleVariants ? variants : [], // Only include variants in variants mode
+    reconstruction_job_id: reconstructionJobId,
   };
 };
 
@@ -74,6 +76,7 @@ const ProductManagement = () => {
 
   const [hasMultipleVariants, setHasMultipleVariants] = useState<boolean>(false);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [reconstructionJobId, setReconstructionJobId] = useState<string | null>(null);
 
   // File upload states using our custom hook
   const { fileState, handle3DModelUpload, handleImageUpload, removeImage, remove3DModel } = useFileUpload();
@@ -176,6 +179,11 @@ const ProductManagement = () => {
           })));
         }
 
+        // Populate reconstruction_job_id if available
+        if (productData.reconstruction_job_id) {
+          setReconstructionJobId(productData.reconstruction_job_id);
+        }
+
         // Populate variants if available and set toggle state
         if (productData.variants && productData.variants.length > 0) {
           setVariants(productData.variants);
@@ -232,7 +240,7 @@ const ProductManagement = () => {
       }
 
       // Create product data using our utility function
-      const productData = createProductData(formData, pricingData, metals, gemstones, variants, hasMultipleVariants);
+      const productData = createProductData(formData, pricingData, metals, gemstones, variants, hasMultipleVariants, reconstructionJobId);
 
       console.log(isEdit ? 'Updating product with data:' : 'Creating product with data:', productData);
 
@@ -404,6 +412,8 @@ const ProductManagement = () => {
                     onImageUpload={handleImageUpload}
                     onRemoveImage={removeImage}
                     onRemove3DModel={remove3DModel}
+                    reconstructionJobId={reconstructionJobId}
+                    onReconstructionJobCreated={setReconstructionJobId}
                   />
 
                   {/* Submit Button */}

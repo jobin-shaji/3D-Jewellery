@@ -208,7 +208,9 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
       variants = [],
       metals = [],
       gemstones = [],
-      stock_quantity = 0
+      stock_quantity = 0,
+      reconstruction_job_id = null,
+      reconstruction_status = null
     } = req.body;
 
     // Parse possible string fields
@@ -292,6 +294,7 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
 
     // Calculate prices using computeProductPrice for consistency
     let baseTotalPrice = 0;
+    let baseMaterialCostVal = null;
     try {
       // Build a temporary product object for price calculation
       const tempProduct = {
@@ -313,14 +316,22 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
             const variantPricing = priceResult.data.find(item => item.variant_id === variant.variant_id);
             if (variantPricing) {
               variant.totalPrice = Math.round(variantPricing.subtotal || 0);
+              const mCost = (variantPricing.metals || []).reduce((sum, m) => sum + (m.totalPrice || 0), 0);
+              const gCost = (variantPricing.gemstones || []).reduce((sum, g) => sum + (g.totalPrice || 0), 0);
+              variant.baseMaterialCost = Math.round(mCost + gCost);
             } else {
               variant.totalPrice = 0;
+              variant.baseMaterialCost = null;
             }
           }
         } else {
           // For base products (no variants), set the base totalPrice
           if (priceResult.data.length > 0) {
-            baseTotalPrice = Math.round(priceResult.data[0].subtotal || 0);
+            const bp = priceResult.data[0];
+            baseTotalPrice = Math.round(bp.subtotal || 0);
+            const mCost = (bp.metals || []).reduce((sum, m) => sum + (m.totalPrice || 0), 0);
+            const gCost = (bp.gemstones || []).reduce((sum, g) => sum + (g.totalPrice || 0), 0);
+            baseMaterialCostVal = Math.round(mCost + gCost);
             console.log('✅ Base product price calculated:', baseTotalPrice);
           }
         }
@@ -328,6 +339,7 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
         if (variants && variants.length > 0) {
           for (const variant of variants) {
             variant.totalPrice = 0;
+            variant.baseMaterialCost = null;
           }
         }
       }
@@ -336,6 +348,7 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
       if (variants && variants.length > 0) {
         for (const variant of variants) {
           variant.totalPrice = 0;
+          variant.baseMaterialCost = null;
         }
       }
     }
@@ -351,7 +364,10 @@ router.post('/', authenticateToken, isAdmin, async (req, res) => {
       metals,
       gemstones,
       stock_quantity,
-      totalPrice: baseTotalPrice // Add calculated base price
+      totalPrice: baseTotalPrice, // Add calculated base price
+      baseMaterialCost: baseMaterialCostVal,
+      reconstruction_job_id,
+      reconstruction_status
     });
 
     await product.save();
@@ -647,19 +663,25 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
             const variantPricing = priceResult.data.find(item => item.variant_id === variant.variant_id);
             if (variantPricing) {
               variant.totalPrice = Math.round(variantPricing.subtotal || 0);
+              const mCost = (variantPricing.metals || []).reduce((sum, m) => sum + (m.totalPrice || 0), 0);
+              const gCost = (variantPricing.gemstones || []).reduce((sum, g) => sum + (g.totalPrice || 0), 0);
+              variant.baseMaterialCost = Math.round(mCost + gCost);
             } else {
               variant.totalPrice = 0;
+              variant.baseMaterialCost = null;
             }
           }
         } else {
           for (const variant of updateData.variants) {
             variant.totalPrice = 0;
+            variant.baseMaterialCost = null;
           }
         }
       } catch (error) {
         console.error('Error calculating variant price:', error);
         for (const variant of updateData.variants) {
           variant.totalPrice = 0;
+          variant.baseMaterialCost = null;
         }
       }
     } else {
@@ -673,7 +695,11 @@ router.put('/:id', authenticateToken, isAdmin, async (req, res) => {
           };
           const priceResult = await computeProductPrice(tempProduct);
           if (priceResult.success && priceResult.data && priceResult.data.length > 0) {
-            updateData.totalPrice = Math.round(priceResult.data[0].subtotal || 0);
+            const bp = priceResult.data[0];
+            updateData.totalPrice = Math.round(bp.subtotal || 0);
+            const mCost = (bp.metals || []).reduce((sum, m) => sum + (m.totalPrice || 0), 0);
+            const gCost = (bp.gemstones || []).reduce((sum, g) => sum + (g.totalPrice || 0), 0);
+            updateData.baseMaterialCost = Math.round(mCost + gCost);
             console.log('✅ Base product price recalculated:', updateData.totalPrice);
           } else {
             console.log('⚠️ Price calculation returned no data, keeping existing price');

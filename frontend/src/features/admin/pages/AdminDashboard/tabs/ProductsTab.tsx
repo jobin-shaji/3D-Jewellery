@@ -9,6 +9,7 @@ import { useToast } from "@/shared/hooks/use-toast";
 import { useProductVisibility } from "@/shared/hooks/useProductVisibility";
 import { useDeleteProduct } from "@/features/admin/hooks/useDeleteProduct";
 import { Product } from "@/shared/types";
+import { ReconstructionStatusBadge } from "./ReconstructionStatusBadge";
 
 interface ProductsTabProps {
   products: Product[];
@@ -148,6 +149,13 @@ export const ProductsTab = ({ products, loading, fetchProducts, refreshStats}: P
                         <Badge className={getStatusColor(getProductStatus(product))}>
                           {getProductStatus(product).replace('_', ' ')}
                         </Badge>
+                        {product.reconstruction_job_id && !product.model_3d_url && (
+                          <ReconstructionStatusBadge 
+                            productId={product.id!} 
+                            jobId={product.reconstruction_job_id} 
+                            onSyncComplete={fetchProducts} 
+                          />
+                        )}
                       </div>
                     </TableCell>
                     <TableCell>

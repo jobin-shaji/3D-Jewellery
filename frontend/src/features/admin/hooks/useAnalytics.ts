@@ -11,6 +11,10 @@ export interface OverviewData {
     change: number;
     avgOrderValue: number;
   };
+  profit: {
+    total: number;
+    change: number;
+  };
   orders: {
     total: number;
     change: number;

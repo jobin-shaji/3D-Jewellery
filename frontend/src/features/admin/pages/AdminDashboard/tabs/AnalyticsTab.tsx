@@ -206,6 +206,8 @@ export const NewAnalyticsTab = () => {
 
     // Calculate derived data
     const totalRevenue = overview.revenue.total;
+    const totalProfit = overview.profit?.total || 0;
+    const profitChange = overview.profit?.change || 0;
     const totalOrders = overview.orders.total;
     const averageOrderValue = overview.revenue.avgOrderValue;
     const revenueChange = overview.revenue.change;
@@ -247,12 +249,18 @@ export const NewAnalyticsTab = () => {
             </div>
 
             {/* Key Performance Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <StatsCard
                     title="Total Revenue"
                     value={formatPrice(totalRevenue)}
                     icon={IndianRupee}
                     description={`${revenueChange >= 0 ? '↑' : '↓'} ${Math.abs(revenueChange).toFixed(1)}% from previous period`}
+                />
+                <StatsCard
+                    title="Gross Profit"
+                    value={formatPrice(totalProfit)}
+                    icon={TrendingUp}
+                    description={`${profitChange >= 0 ? '↑' : '↓'} ${Math.abs(profitChange).toFixed(1)}% from previous period`}
                 />
                 <StatsCard
                     title="Total Orders"
