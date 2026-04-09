@@ -43,7 +43,9 @@ export const OverviewTab = ({ stats, metalPrices, metalPricesLoading, refreshPri
     );
   }
 
-  return (
+
+   
+  return ( 
     <div className="space-y-6">
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -99,6 +101,7 @@ export const OverviewTab = ({ stats, metalPrices, metalPricesLoading, refreshPri
           description="Orders cancelled"
           icon={XCircle}
         />
+
       </div>
 
       {/* Metal Prices */}
@@ -123,6 +126,7 @@ export const OverviewTab = ({ stats, metalPrices, metalPricesLoading, refreshPri
               <div className="flex items-center justify-center col-span-full p-4">
                 <Loader2 className="h-6 w-6 animate-spin" />
               </div>
+
             ) : (
               metalPrices.map((metalPrice) => (
                 <MetalPriceCard 
@@ -160,7 +164,7 @@ export const OverviewTab = ({ stats, metalPrices, metalPricesLoading, refreshPri
               {stats.recentOrders.length === 0 ? (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center text-muted-foreground">
-                    No recent orders found
+                    No Recent orders found
                   </TableCell>
                 </TableRow>
               ) : (

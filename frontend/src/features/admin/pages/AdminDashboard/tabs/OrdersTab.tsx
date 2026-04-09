@@ -114,7 +114,7 @@ export const OrdersTab = ({ orders: legacyOrders }: OrdersTabProps) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold">Orders Management</h2>
+        <h2 className="text-2xl font-bold">Order Management</h2>
         <Button onClick={handleRefresh} disabled={loading} variant="outline">
           <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
           Refresh
